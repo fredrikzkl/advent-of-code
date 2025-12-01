@@ -1,0 +1,8 @@
+[package]
+name = "day-1-secret-entrance"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "main"
+path = "main.rs"
