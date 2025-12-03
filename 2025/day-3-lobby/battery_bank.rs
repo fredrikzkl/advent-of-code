@@ -1,6 +1,6 @@
 pub struct BatteryBank {
     batteries: String,
-    highest_joltage: u16,
+    highest_joltage: u64,
 }
 
 impl BatteryBank {
@@ -17,8 +17,7 @@ impl BatteryBank {
 
         println!("Battery length: {}", self.batteries.len());
         for i in 0..size {
-            let max = (self.batteries.len() - size as usize) + i as usize;
-            println!("Max index for iteration {}: {}", i, max);
+            let max = (self.batteries.len() - size as usize + 1) + i as usize;
             let (next_battery, next_battery_index) = self.get_next_battery(startindex, max);
 
             battery_list.push(next_battery);
@@ -30,7 +29,7 @@ impl BatteryBank {
             .map(|b| b.to_string())
             .collect::<String>();
 
-        self.highest_joltage = battery_string.parse::<u16>().unwrap();
+        self.highest_joltage = battery_string.parse::<u64>().unwrap();
     }
 
     fn get_next_battery(&self, start_index: usize, end_index: usize) -> (u8, usize) {
@@ -47,7 +46,7 @@ impl BatteryBank {
         (highest, highest_index)
     }
 
-    pub fn joltage(&self) -> u16 {
+    pub fn joltage(&self) -> u64 {
         self.highest_joltage
     }
 }
