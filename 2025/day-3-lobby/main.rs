@@ -5,7 +5,7 @@ mod battery_bank;
 use battery_bank::BatteryBank;
 
 fn main() {
-    let file = File::open("data/input.txt");
+    let file = File::open("data/example.txt");
     let reader = BufReader::new(file.unwrap());
 
     let mut total_joltage: i16 = 0;
@@ -14,7 +14,7 @@ fn main() {
         println!("{}", line);
         let mut battery = BatteryBank::new(line);
 
-        battery.calculate_highest_joltage();
+        battery.calculate_highest_joltage(12);
         println!("Highest joltage: {}", battery.joltage());
         total_joltage = total_joltage + battery.joltage() as i16;
     }

@@ -1,7 +1,5 @@
 pub struct BatteryBank {
     batteries: String,
-    highest_tens: u8,
-    highest_ones: u8,
     highest_joltage: u16,
 }
 
@@ -9,44 +7,44 @@ impl BatteryBank {
     pub fn new(batteries: String) -> Self {
         BatteryBank {
             batteries,
-            highest_tens: 0,
-            highest_ones: 0,
             highest_joltage: 0,
         }
     }
 
-    pub fn calculate_highest_joltage(&mut self) {
-        let mut index_of_highest_tens = 0;
-        self.batteries
-            .chars()
-            .enumerate()
-            .for_each(|(i, c): (usize, char)| {
-                if i == self.batteries.len() - 1 {
-                    return;
-                }
-                let candidate = c.to_digit(10).unwrap() as u8;
-                if candidate > self.highest_tens {
-                    self.highest_tens = candidate;
-                    index_of_highest_tens = i;
-                }
-            });
+    pub fn calculate_highest_joltage(&mut self, size: i8) {
+        let mut battery_list: Vec<u8> = Vec::new();
+        let mut startindex: usize = 0;
 
-        self.batteries
-            .chars()
-            .enumerate()
-            .for_each(|(i, c): (usize, char)| {
-                if i <= index_of_highest_tens {
-                    return;
-                }
+        println!("Battery length: {}", self.batteries.len());
+        for i in 0..size {
+            let max = (self.batteries.len() - size as usize) + i as usize;
+            println!("Max index for iteration {}: {}", i, max);
+            let (next_battery, next_battery_index) = self.get_next_battery(startindex, max);
 
-                let candidate = c.to_digit(10).unwrap() as u8;
-                if candidate > self.highest_ones {
-                    self.highest_ones = candidate;
-                }
-            });
+            battery_list.push(next_battery);
+            startindex = next_battery_index + 1;
+        }
 
-        let highest_voltage_str = format!("{}{}", self.highest_tens, self.highest_ones);
-        self.highest_joltage = highest_voltage_str.parse::<u16>().unwrap();
+        let battery_string = battery_list
+            .iter()
+            .map(|b| b.to_string())
+            .collect::<String>();
+
+        self.highest_joltage = battery_string.parse::<u16>().unwrap();
+    }
+
+    fn get_next_battery(&self, start_index: usize, end_index: usize) -> (u8, usize) {
+        let mut highest: u8 = 0;
+        let mut highest_index: usize = start_index;
+
+        for i in start_index..end_index {
+            let candidate = self.batteries.chars().nth(i).unwrap().to_digit(10).unwrap() as u8;
+            if candidate > highest {
+                highest = candidate;
+                highest_index = i;
+            }
+        }
+        (highest, highest_index)
     }
 
     pub fn joltage(&self) -> u16 {
