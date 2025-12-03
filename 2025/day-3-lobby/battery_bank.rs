@@ -15,7 +15,6 @@ impl BatteryBank {
         let mut battery_list: Vec<u8> = Vec::new();
         let mut startindex: usize = 0;
 
-        println!("Battery length: {}", self.batteries.len());
         for i in 0..size {
             let max = (self.batteries.len() - size as usize + 1) + i as usize;
             let (next_battery, next_battery_index) = self.get_next_battery(startindex, max);
