@@ -19,21 +19,19 @@ impl ScrollGrid {
         for x in 0..self.width {
             for y in 0..self.height {
                 let current_char = self.orignal_grid[x][y];
-                if current_char == '@' {
-                    if self.check_if_valid_scroll(x, y) {
-                        valid_scrolls += 1;
-                        self.orignal_grid[x][y] = 'x';
-                    }
+                if current_char == '@' && self.is_valid_scroll(x, y) {
+                    valid_scrolls += 1;
+                    self.orignal_grid[x][y] = 'x';
                 }
             }
         }
         valid_scrolls
     }
 
-    fn check_if_valid_scroll(&self, scroll_x: usize, scroll_y: usize) -> bool {
+    fn is_valid_scroll(&self, scroll_x: usize, scroll_y: usize) -> bool {
         let mut adjacent_scrolls = 0;
-        for x in -1..1 {
-            for y in -1..1 {
+        for x in -1..=1 {
+            for y in -1..=1 {
                 if x == 0 && y == 0 {
                     continue;
                 }
@@ -45,7 +43,7 @@ impl ScrollGrid {
                     continue;
                 }
 
-                let temp = self.orignal_grid[scroll_x][scroll_y];
+                let temp = self.orignal_grid[new_x as usize][new_y as usize];
                 if temp == '@' || temp == 'x' {
                     adjacent_scrolls += 1;
                 }

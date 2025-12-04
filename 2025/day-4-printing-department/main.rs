@@ -5,7 +5,7 @@ mod scroll_grid;
 use scroll_grid::ScrollGrid;
 
 fn main() {
-    let file = File::open("data/example.txt");
+    let file = File::open("data/input.txt");
     let reader = BufReader::new(file.unwrap());
 
     let mut scroll_grid = ScrollGrid::new();
