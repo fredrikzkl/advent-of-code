@@ -1,0 +1,9 @@
+
+[package]
+name = "day-3-printning-department"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "main"
+path = "main.rs"
