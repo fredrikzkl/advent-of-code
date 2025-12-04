@@ -14,8 +14,17 @@ fn main() {
         scroll_grid.add_line(&line.unwrap());
     }
 
-    let valid_scrolls = scroll_grid.calculate_valid_scrolls();
-    println!("{}", valid_scrolls);
+    let mut total_valid_scrolls = 0;
+    loop {
+        let valid_scrolls: usize = scroll_grid.calculate_valid_scrolls();
+        scroll_grid.print_grid();
+        if valid_scrolls == 0 {
+            break;
+        }
+        total_valid_scrolls += valid_scrolls;
+        scroll_grid.clean_all_marked_scrolls();
+    }
 
     scroll_grid.print_grid();
+    println!("Total Valid Scrolls: {}", total_valid_scrolls);
 }

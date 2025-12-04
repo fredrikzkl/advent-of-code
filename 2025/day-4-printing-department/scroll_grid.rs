@@ -67,6 +67,16 @@ impl ScrollGrid {
         true
     }
 
+    pub fn clean_all_marked_scrolls(&mut self) {
+        for x in 0..self.width {
+            for y in 0..self.height {
+                if self.orignal_grid[x][y] == 'x' {
+                    self.orignal_grid[x][y] = '.';
+                }
+            }
+        }
+    }
+
     pub fn add_line(&mut self, line: &str) {
         self.orignal_grid.push(line.chars().collect());
         self.height += 1;
