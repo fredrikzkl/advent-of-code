@@ -4,6 +4,10 @@ name = "day-5-cafeteria"
 version = "0.1.0"
 edition = "2021"
 
+[lib]
+name = "day_5_cafeteria"
+path = "lib.rs"
+
 [[bin]]
 name = "main"
 path = "main.rs"

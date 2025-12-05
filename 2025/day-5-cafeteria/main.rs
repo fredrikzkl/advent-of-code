@@ -31,4 +31,12 @@ fn main() {
     }
 
     println!("Number of fresh food items: {}", fresh_count);
+
+    // Part 2
+    fresh_list.adjust_overlapping_ranges();
+
+    println!(
+        "Number of valid ingredient IDs: {}",
+        fresh_list.get_valid_ingredients_count()
+    );
 }
