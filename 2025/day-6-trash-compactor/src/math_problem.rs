@@ -7,7 +7,7 @@ impl MathProblem {
     pub fn new() -> Self {
         MathProblem {
             numbers: Vec::new(),
-            operator: '+',
+            operator: ' ',
         }
     }
 
@@ -27,6 +27,10 @@ impl MathProblem {
 
     pub fn set_operator(&mut self, operator: char) {
         self.operator = operator;
+    }
+
+    pub fn has_oerator(&self) -> bool {
+        self.operator == '+' || self.operator == '*'
     }
 
     pub fn print_problem(&self) {

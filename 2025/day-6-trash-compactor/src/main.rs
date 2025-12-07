@@ -1,21 +1,46 @@
 use std::fs::File;
-use std::io::{BufRead, BufReader};
+use std::io::{BufRead, BufReader, Seek};
 
 mod math_problem;
 use math_problem::MathProblem;
 
+mod cephalopod;
+use cephalopod::Cephalopod;
+
 fn main() {
     let file = File::open("data.txt");
-    let reader = BufReader::new(file.unwrap());
+    let mut reader = BufReader::new(file.unwrap());
 
+    solve_part_one(&mut reader);
+
+    reader.rewind().unwrap();
+    solve_part_two(&mut reader);
+}
+
+fn solve_part_two(reader: &mut BufReader<File>) {
+    println!("--- Part Two ---");
+    let mut cephalopods: Cephalopod = Cephalopod::new();
+
+    for linte in reader.lines() {
+        let line = linte.unwrap();
+        cephalopods.read_line(line.as_str());
+    }
+
+    cephalopods.build_problems();
+    cephalopods.print_problems();
+    println!("Total Sum: {}\n", cephalopods.calculate_total());
+}
+
+fn solve_part_one(reader: &mut BufReader<File>) {
+    println!("--- Part One ---");
     let mut problems: Vec<MathProblem> = Vec::new();
 
     for linte in reader.lines() {
         let line = linte.unwrap();
 
-        let symbols = parse_line(line.as_str());
+        let entries = parse_line(line.as_str());
 
-        for (index, symbol) in symbols.iter().enumerate() {
+        for (index, symbol) in entries.iter().enumerate() {
             if problems.len() <= index {
                 problems.push(MathProblem::new());
             }
@@ -37,11 +62,10 @@ fn main() {
         total_sum += problm.calculate();
     }
 
-    println!("Total Sum: {}", total_sum);
+    println!("Total Sum: {}\n", total_sum);
 }
 
 fn parse_line(line: &str) -> Vec<String> {
-    println!("Parsing Line: {}", line);
     let mut result: Vec<String> = Vec::new();
 
     let mut entry = String::new();
@@ -61,6 +85,5 @@ fn parse_line(line: &str) -> Vec<String> {
         result.push(entry.clone());
     }
 
-    println!("Parsed Line: {:?}\n", result);
     result
 }
