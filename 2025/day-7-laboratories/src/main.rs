@@ -14,8 +14,14 @@ fn main() {
         laboratory.add_line(&line.unwrap());
     }
 
+    laboratory.solve_part_2();
+    println!(
+        "Timelines splitted: {}",
+        laboratory.get_timelines_splitted()
+    );
+
     laboratory.solve_diagram();
-    laboratory.print_map();
+    // laboratory.print_map();
     println!("Beam count: {}", laboratory.count_beams());
     println!("Split count: {}", laboratory.get_splits());
 }

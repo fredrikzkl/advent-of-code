@@ -3,6 +3,7 @@ pub struct Laboriatory {
     map_width: usize,
     map_height: usize,
     splits: u64,
+    timelines_splitted: u64,
 }
 
 impl Laboriatory {
@@ -12,6 +13,7 @@ impl Laboriatory {
             map_width: 0,
             map_height: 0,
             splits: 0,
+            timelines_splitted: 0,
         }
     }
 
@@ -19,6 +21,48 @@ impl Laboriatory {
         self.map.push(line.chars().collect());
         self.map_width = line.len();
         self.map_height += 1;
+    }
+
+    pub fn solve_part_2(&mut self) {
+        // Find the first first spot
+        let col = self.map[0]
+            .iter()
+            .position(|&c| c == 'S')
+            .expect("No starting point found");
+
+        // Start the timeline
+        self.quantum_split(0, col);
+    }
+
+    pub fn quantum_split(&mut self, row: usize, col: usize) {
+        if row + 1 >= self.map_height {
+            return;
+        }
+
+        let cell_below = self.map[row + 1][col];
+
+        if cell_below == '.' {
+            self.quantum_split(row + 1, col);
+            return;
+        }
+
+        if cell_below == '^' {
+            self.timelines_splitted += 1;
+
+            // New timeline at left col
+            if let Some(left_col) = col.checked_sub(1) {
+                if self.map[row + 1][left_col] == '.' {
+                    self.quantum_split(row + 1, left_col);
+                }
+            }
+
+            // New timeline at right col
+            if col + 1 < self.map_width {
+                if self.map[row + 1][col + 1] == '.' {
+                    self.quantum_split(row + 1, col + 1);
+                }
+            }
+        }
     }
 
     pub fn solve_diagram(&mut self) {
@@ -77,5 +121,9 @@ impl Laboriatory {
 
     pub fn get_splits(&self) -> u64 {
         self.splits
+    }
+
+    pub fn get_timelines_splitted(&self) -> u64 {
+        self.timelines_splitted
     }
 }
