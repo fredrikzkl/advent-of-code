@@ -1,9 +1,12 @@
+use std::collections::HashSet;
+
 use nalgebra::Vector3;
 
 pub struct Circuits {
     boxes: Vec<JunctionBox>,
     circuits: Vec<Circuit>,
     prev_closest: f64,
+    resolved_pairs: HashSet<String>,
 }
 
 impl Circuits {
@@ -12,6 +15,7 @@ impl Circuits {
             boxes: Vec::new(),
             circuits: Vec::new(),
             prev_closest: 0.0,
+            resolved_pairs: HashSet::new(),
         }
     }
 
@@ -42,8 +46,15 @@ impl Circuits {
                     continue;
                 }
 
+                if self
+                    .resolved_pairs
+                    .contains(&Self::get_pair_hash(box_item, other_box))
+                {
+                    continue;
+                }
+
                 let distance = Self::distance(box_item, other_box);
-                if distance < closest_distance && distance > self.prev_closest {
+                if distance <= closest_distance && distance >= self.prev_closest {
                     closest_distance = distance;
                     box_a = Some(box_item);
                     box_b = Some(other_box);
@@ -56,13 +67,17 @@ impl Circuits {
         if box_a.is_none() || box_b.is_none() {
             return;
         }
+
         let mut new_circuelt = Circuit::new();
         new_circuelt.boxes.push(box_a.unwrap().clone());
         new_circuelt.boxes.push(box_b.unwrap().clone());
 
+        self.resolved_pairs
+            .insert(Self::get_pair_hash(box_a.unwrap(), box_b.unwrap()));
+
         // Check if the circuit already exists
         for circuit in self.circuits.iter_mut() {
-            if circuit.try_connect_circuit(&mut new_circuelt) {
+            if circuit.try_connect_circuit(&new_circuelt) {
                 return;
             }
         }
@@ -95,6 +110,14 @@ impl Circuits {
         self.circuits
             .sort_by(|a, b| b.boxes.len().cmp(&a.boxes.len()));
     }
+
+    fn get_pair_hash(a: &JunctionBox, b: &JunctionBox) -> String {
+        if a.index < b.index {
+            format!("{}-{}", a.index, b.index)
+        } else {
+            format!("{}-{}", b.index, a.index)
+        }
+    }
 }
 
 pub struct Circuit {
@@ -108,31 +131,23 @@ impl Circuit {
 
     // Attempt to connect this circuit with another
     // If there is a match, we add the other box to this circuit
-    pub fn try_connect_circuit(&mut self, other_circuit: &mut Circuit) -> bool {
-        let mut is_connected = false;
+    pub fn try_connect_circuit(&mut self, other_circuit: &Circuit) -> bool {
+        let mut self_indices: HashSet<usize> = self.boxes.iter().map(|b| b.index).collect();
 
-        for own_box in self.boxes.iter() {
-            for other_box in other_circuit.boxes.iter() {
-                if own_box.index == other_box.index {
-                    is_connected = true;
-                    break;
-                }
-            }
-        }
+        // Check if there's any overlap between the two circuits
+        let has_overlap = other_circuit
+            .boxes
+            .iter()
+            .any(|b| self_indices.contains(&b.index));
 
-        if !is_connected {
+        if !has_overlap {
             return false;
         }
 
-        // There is match, we connect the other boxes
+        // There is a match, we connect the other boxes
         for other_box in other_circuit.boxes.iter() {
-            let mut exists = false;
-            for box_item in self.boxes.iter() {
-                if other_box.index == box_item.index {
-                    exists = true;
-                }
-            }
-            if !exists {
+            // If hash set succeeds inserts, we know that it's a new box
+            if self_indices.insert(other_box.index) {
                 self.boxes.push(other_box.clone());
             }
         }

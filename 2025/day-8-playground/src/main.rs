@@ -5,7 +5,7 @@ mod circuits;
 use circuits::Circuits;
 
 fn main() {
-    let file = File::open("data.txt");
+    let file = File::open("example.txt");
     let reader = BufReader::new(file.unwrap());
 
     let mut circuits = Circuits::new();
@@ -15,7 +15,7 @@ fn main() {
         circuits.add_box(idx, line);
     }
 
-    for _ in 0..=10 {
+    for _ in 0..10 {
         circuits.find_closest_circuit();
     }
 
