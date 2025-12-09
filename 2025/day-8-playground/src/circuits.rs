@@ -53,6 +53,10 @@ impl Circuits {
                     continue;
                 }
 
+                if self.is_in_same_circuit(box_item, other_box) {
+                    continue;
+                }
+
                 let distance = Self::distance(box_item, other_box);
                 if distance <= closest_distance && distance >= self.prev_closest {
                     closest_distance = distance;
@@ -118,6 +122,15 @@ impl Circuits {
             format!("{}-{}", b.index, a.index)
         }
     }
+
+    fn is_in_same_circuit(&self, a: &JunctionBox, b: &JunctionBox) -> bool {
+        for circuit in self.circuits.iter() {
+            if circuit.contains(a) && circuit.contains(b) {
+                return true;
+            }
+        }
+        false
+    }
 }
 
 pub struct Circuit {
@@ -153,6 +166,10 @@ impl Circuit {
         }
 
         true
+    }
+
+    pub fn contains(&self, box_item: &JunctionBox) -> bool {
+        self.boxes.iter().any(|b| b.index == box_item.index)
     }
 }
 
