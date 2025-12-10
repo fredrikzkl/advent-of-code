@@ -2,18 +2,12 @@ use crate::point::Point;
 
 pub struct Map {
     map: Vec<Vec<char>>,
-    height: usize,
-    width: usize,
 }
 
 impl Map {
     pub fn new(red_tiles: &Vec<Point>) -> Self {
         let map = Self::generate_map(red_tiles);
-        Map {
-            height: map.len(),
-            width: map[0].len(),
-            map,
-        }
+        Map { map }
     }
 
     fn generate_map(red_tiles: &Vec<Point>) -> Vec<Vec<char>> {
@@ -61,7 +55,42 @@ impl Map {
             }
         }
 
+        // Fill the rest...
+        for row in 0..height {
+            let start = Self::find_first_occurence(&map[row]);
+            let end = Self::find_last_occurence(&map[row]);
+
+            if let (Some(start_idx), Some(end_idx)) = (start, end) {
+                if end_idx < start_idx {
+                    continue;
+                }
+                for i in start_idx..=end_idx.min(map[row].len().saturating_sub(1)) {
+                    if map[row][i] == '.' {
+                        map[row][i] = 'X';
+                    }
+                }
+            }
+        }
+
         map
+    }
+
+    pub fn find_first_occurence(row: &[char]) -> Option<usize> {
+        for (idx, c) in row.iter().enumerate() {
+            if *c != '.' {
+                return Some(idx);
+            }
+        }
+        None
+    }
+
+    pub fn find_last_occurence(row: &[char]) -> Option<usize> {
+        for idx in (0..row.len()).rev() {
+            if row[idx] != '.' {
+                return Some(idx);
+            }
+        }
+        None
     }
 
     fn populate_green_tiles_vertically(
