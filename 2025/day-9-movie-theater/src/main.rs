@@ -1,10 +1,12 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
+mod map;
 mod point;
 mod rectangle;
 mod theater;
 
+use map::Map;
 use theater::Theater;
 
 fn main() {
@@ -21,5 +23,8 @@ fn main() {
     theater.generate_rectangles();
     theater.sort_rectangles();
 
-    theater.rectangles().last().unwrap().print()
+    let map = Map::new(theater.corners());
+    map.print();
+
+    // theater.rectangles().last().unwrap().print()
 }

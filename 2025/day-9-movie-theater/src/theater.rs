@@ -45,4 +45,8 @@ impl Theater {
             y: split[1].parse::<f64>().unwrap(),
         });
     }
+
+    pub fn corners(&self) -> &Vec<Point> {
+        &self.corners
+    }
 }
