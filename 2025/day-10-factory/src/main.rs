@@ -10,7 +10,7 @@ use machine::Machine;
 use tree::Tree;
 
 fn main() {
-    let file = File::open("data.txt");
+    let file = File::open("example.txt");
     let reader = BufReader::new(file.unwrap());
 
     let mut machines: Vec<Machine> = Vec::new();
@@ -18,8 +18,11 @@ fn main() {
     for linte in reader.lines() {
         let line = linte.unwrap();
         let new_machine = Machine::new(&line);
+        new_machine.print();
         machines.push(new_machine);
     }
+
+    return;
 
     let mut total_cycles = 0;
     for machine in machines.iter() {

@@ -4,6 +4,7 @@ use crate::button::Button;
 pub struct Machine {
     pub lights: Vec<bool>,
     pub buttons: Vec<Button>,
+    pub jolts: Vec<u32>,
 }
 
 impl Machine {
@@ -23,7 +24,18 @@ impl Machine {
             });
         }
 
-        Machine { lights, buttons }
+        let mut jolts: Vec<u32> = Vec::new();
+        let jolt_str = split[split.len() - 1].replace("{", "").replace("}", "");
+        let jolt_parts = jolt_str.split(",");
+        for jp in jolt_parts {
+            jolts.push(jp.parse().unwrap());
+        }
+
+        Machine {
+            lights,
+            buttons,
+            jolts,
+        }
     }
 
     fn parse_lights(input: &str) -> Vec<bool> {
@@ -39,5 +51,6 @@ impl Machine {
         for b in &self.buttons {
             println!("{:?}", b.on_click);
         }
+        println!("Jolts: {:?}", self.jolts);
     }
 }
