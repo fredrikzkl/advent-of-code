@@ -2,10 +2,13 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 
 mod device;
+mod tree;
+
 use device::Device;
+use tree::Tree;
 
 fn main() {
-    let file = File::open("example.txt");
+    let file = File::open("data.txt");
     let reader = BufReader::new(file.unwrap());
 
     let mut devices: Vec<Device> = Vec::new();
@@ -17,4 +20,8 @@ fn main() {
         new_device.print();
         devices.push(new_device);
     }
+
+    let mut tree = Tree::new(devices);
+    let solution = tree.grow_tree();
+    println!("Solution: {}", solution);
 }

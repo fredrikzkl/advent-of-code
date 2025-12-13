@@ -1,6 +1,7 @@
+#[derive(Clone, PartialEq)]
 pub struct Device {
-    input: String,
-    output: Vec<String>,
+    pub input: String,
+    pub output: Vec<String>,
 }
 
 impl Device {
@@ -11,6 +12,13 @@ impl Device {
             input: split[0].to_string(),
             output: Self::parse_output(split[1]),
         }
+    }
+
+    pub fn is_out(&self) -> bool {
+        if self.output.len() == 1 && self.output[0] == "out" {
+            return true;
+        }
+        false
     }
 
     pub fn parse_output(raw_output: &str) -> Vec<String> {
