@@ -1,4 +1,5 @@
 use crate::button::Button;
+use crate::jolt_state::JoltState;
 
 #[derive(Clone)]
 pub struct Machine {
@@ -36,6 +37,16 @@ impl Machine {
             buttons,
             jolts,
         }
+    }
+
+    pub fn get_lowest_jolt(&self) -> u32 {
+        let mut lowest = u32::MAX;
+        for j in &self.jolts {
+            if *j < lowest {
+                lowest = *j;
+            }
+        }
+        lowest
     }
 
     fn parse_lights(input: &str) -> Vec<bool> {
