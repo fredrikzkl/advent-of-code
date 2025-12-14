@@ -21,6 +21,14 @@ impl Device {
         false
     }
 
+    pub fn is_dac(&self) -> bool {
+        self.input == "dac"
+    }
+
+    pub fn is_fft(&self) -> bool {
+        self.input == "fft"
+    }
+
     pub fn parse_output(raw_output: &str) -> Vec<String> {
         raw_output
             .split(" ")

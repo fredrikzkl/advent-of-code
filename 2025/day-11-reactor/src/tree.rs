@@ -2,13 +2,15 @@ use crate::device::Device;
 
 pub struct Tree {
     devices: Vec<Device>,
-    nodes: Vec<TreeNode>, // Store all nodes here
-    root_idx: usize,      // Index to root node
+    nodes: Vec<TreeNode>,
+    root_idx: usize,
 }
 
 pub struct TreeNode {
     pub device: Device,
-    pub children: Vec<usize>, // Indices into Tree.nodes
+    pub children: Vec<usize>,
+    pub dac_visited: bool,
+    pub fft_visited: bool,
 }
 
 impl Tree {
@@ -17,6 +19,8 @@ impl Tree {
         let root = TreeNode {
             device: root_device,
             children: Vec::new(),
+            dac_visited: false,
+            fft_visited: false,
         };
         Tree {
             devices,
@@ -41,12 +45,18 @@ impl Tree {
             let mut next_level_indices: Vec<usize> = Vec::new();
 
             for &node_idx in current_indices.iter() {
-                let outputs = self.nodes[node_idx].device.output.clone();
+                let current_node = &self.nodes[node_idx];
+                let outputs = current_node.device.output.clone();
+
+                let is_dac_visited = current_node.dac_visited || (current_node.device.is_dac());
+                let is_fft_visited = current_node.fft_visited || (current_node.device.is_fft());
 
                 for output in outputs.iter() {
                     let new_node = TreeNode {
                         device: self.get_device(output),
                         children: Vec::new(),
+                        dac_visited: is_dac_visited,
+                        fft_visited: is_fft_visited,
                     };
                     let new_idx = self.nodes.len();
                     self.nodes.push(new_node);
@@ -54,7 +64,9 @@ impl Tree {
                     self.nodes[node_idx].children.push(new_idx);
 
                     if self.nodes[new_idx].device.is_out() {
-                        solutions += 1;
+                        if is_dac_visited && is_fft_visited {
+                            solutions += 1;
+                        }
                     } else {
                         next_level_indices.push(new_idx);
                     }
@@ -78,7 +90,7 @@ impl Tree {
 
     fn get_root_device(devices: &Vec<Device>) -> Device {
         for device in devices {
-            if device.input == "you" {
+            if device.input == "svr" {
                 return device.clone();
             }
         }
