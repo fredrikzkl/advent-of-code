@@ -2,6 +2,9 @@
 pub struct Device {
     pub input: String,
     pub output: Vec<String>,
+
+    pub path_leads_to_dac: bool,
+    pub path_leads_to_fft: bool,
 }
 
 impl Device {

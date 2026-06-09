@@ -20,18 +20,16 @@ impl Theater {
 
     pub fn sort_rectangles(&mut self) {
         self.rectangles
-            .sort_by(|a, b| a.area.partial_cmp(&b.area).unwrap());
+            .sort_by(|a, b| b.area.partial_cmp(&a.area).unwrap());
     }
 
     pub fn generate_rectangles(&mut self) {
         for i in 0..self.corners.len() {
+            println!("Generating rectangle {}/{}", (i + 1), self.corners.len());
             for j in 0..self.corners.len() {
                 if i != j {
                     let rect = Rectangle::new(self.corners[i].clone(), self.corners[j].clone());
-
-                    if rect.width > 0.0 && rect.height > 0.0 {
-                        self.rectangles.push(rect);
-                    }
+                    self.rectangles.push(rect);
                 }
             }
         }

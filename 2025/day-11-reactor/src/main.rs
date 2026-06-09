@@ -2,10 +2,13 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 
 mod device;
+mod spruce;
 mod tree;
 
 use device::Device;
 use tree::Tree;
+
+use spruce::Spruce;
 
 fn main() {
     let file = File::open("data.txt");
@@ -21,7 +24,9 @@ fn main() {
         devices.push(new_device);
     }
 
-    let mut tree = Tree::new(devices);
-    let solution = tree.grow_tree();
-    println!("Solution: {}", solution);
+    let mut spruce = Spruce::new(spruce::SpruceType::DAC, devices);
+
+    // let mut tree = Tree::new(devices);
+    // let solution = tree.grow_tree();
+    // println!("Solution: {}", solution);
 }
